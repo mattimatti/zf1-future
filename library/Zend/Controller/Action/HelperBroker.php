@@ -245,7 +245,8 @@ class Zend_Controller_Action_HelperBroker
      * @param Zend_Controller_Action $actionController
      * @return void
      */
-    public function __construct(Zend_Controller_Action $actionController)
+    //public function __construct(Zend_Controller_Action $actionController)
+    public function __construct( $actionController)
     {
         $this->_actionController = $actionController;
         foreach (self::getStack() as $helper) {
