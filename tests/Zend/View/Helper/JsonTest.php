@@ -1,4 +1,9 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\TextUI\TestRunner;
+
 /**
  * Zend Framework
  *
@@ -42,8 +47,18 @@ require_once 'Zend/Layout.php';
  * @group      Zend_View
  * @group      Zend_View_Helper
  */
-class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
+class Zend_View_Helper_JsonTest extends TestCase
 {
+    /**
+      * @var Zend_View_Helper_Json
+     */
+    protected $helper;
+
+    /**
+     * @var Zend_Controller_Response_Http
+     */
+    protected $response;
+
     /**
      * Runs the test methods of this class.
      *
@@ -51,9 +66,8 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      */
     public static function main()
     {
-
-        $suite  = new PHPUnit_Framework_TestSuite("Zend_View_Helper_JsonTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
+        $suite = new TestSuite("Zend_View_Helper_JsonTest");
+        $result = (new TestRunner())->run($suite);
     }
 
     /**
@@ -62,7 +76,7 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         Zend_View_Helper_JsonTest_Layout::resetMvcInstance();
 
@@ -82,7 +96,7 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
     }
 
@@ -123,9 +137,9 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
 
     public function testJsonHelperReturnsJsonEncodedString()
     {
-        $data = $this->helper->json(array('foobar'));
+        $data = $this->helper->json(['foobar']);
         $this->assertTrue(is_string($data));
-        $this->assertEquals(array('foobar'), Zend_Json::decode($data));
+        $this->assertEquals(['foobar'], Zend_Json::decode($data));
     }
 
     public function testJsonHelperDisablesLayoutsByDefault()
@@ -140,7 +154,7 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
     {
         $layout = Zend_Layout::startMvc();
         $this->assertTrue($layout->isEnabled());
-        $data = $this->helper->json(array('foobar'), true);
+        $data = $this->helper->json(['foobar'], true);
         $this->assertTrue($layout->isEnabled());
     }
 
@@ -152,16 +166,16 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
         $layout = Zend_Layout::startMvc();
         $this->assertTrue($layout->isEnabled());
         $data = $this->helper->json(
-            array(
+            [
                  'foobar',
-            ),
-            array(
+            ],
+            [
                  'keepLayouts' => true,
-                 'encodeData'  => false,
-            )
+                 'encodeData' => false,
+            ]
         );
         $this->assertTrue($layout->isEnabled());
-        $this->assertSame(array('foobar'), $data);
+        $this->assertSame(['foobar'], $data);
     }
     
     /**
@@ -169,7 +183,7 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      */
     public function testJsonHelperWillAcceptPreencodedJson()
     {
-        $data = $this->helper->json(Zend_Json::encode(array('f')), false, false);
+        $data = $this->helper->json(Zend_Json::encode(['f']), false, false);
         $this->assertEquals('["f"]', $data);
     }
     
@@ -178,7 +192,7 @@ class Zend_View_Helper_JsonTest extends PHPUnit_Framework_TestCase
      */
     public function testJsonHelperWillSendHeadersWhenProvidedWithPreencodedJson()
     {
-        $data = $this->helper->json(Zend_Json::encode(array('f')), false, false);
+        $data = $this->helper->json(Zend_Json::encode(['f']), false, false);
         $this->verifyJsonHeader();
     }
 }

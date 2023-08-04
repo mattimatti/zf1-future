@@ -1,4 +1,9 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\TextUI\TestRunner;
+
 /**
  * Zend Framework
  *
@@ -34,15 +39,20 @@ require_once 'Zend/Stdlib/SplPriorityQueue.php';
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Stdlib_SplPriorityQueueTest extends PHPUnit_Framework_TestCase
+class Zend_Stdlib_SplPriorityQueueTest extends TestCase
 {
+    /**
+     * @var \Zend_Stdlib_SplPriorityQueue|mixed
+     */
+    protected $queue;
+
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
+        $suite = new TestSuite(__CLASS__);
+        $result = (new TestRunner())->run($suite);
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->queue = new Zend_Stdlib_SplPriorityQueue();
         $this->queue->insert('foo', 3);
@@ -59,8 +69,8 @@ class Zend_Stdlib_SplPriorityQueueTest extends PHPUnit_Framework_TestCase
         $queue->insert('baz', 1000);
         $queue->insert('bat', 1000);
 
-        $expected = array('foo', 'bar', 'baz', 'bat');
-        $test     = array();
+        $expected = ['foo', 'bar', 'baz', 'bat'];
+        $test = [];
         foreach ($queue as $datum) {
             $test[] = $datum;
         }
@@ -74,11 +84,11 @@ class Zend_Stdlib_SplPriorityQueueTest extends PHPUnit_Framework_TestCase
         $count = count($this->queue);
         $this->assertSame($count, count($unserialized), 'Expected count ' . $count . '; received ' . count($unserialized));
 
-        $expected = array();
+        $expected = [];
         foreach ($this->queue as $item) {
             $expected[] = $item;
         }
-        $test = array();
+        $test = [];
         foreach ($unserialized as $item) {
             $test[] = $item;
         }
@@ -87,13 +97,13 @@ class Zend_Stdlib_SplPriorityQueueTest extends PHPUnit_Framework_TestCase
 
     public function testCanRetrieveQueueAsArray()
     {
-        $expected = array(
-            'bar', 
-            'foo', 
-            'baz', 
+        $expected = [
+            'bar',
+            'foo',
+            'baz',
             'bat',
-        );
-        $test     = $this->queue->toArray();
+        ];
+        $test = $this->queue->toArray();
         $this->assertSame($expected, $test, var_export($test, 1));
     }
 }

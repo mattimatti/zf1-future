@@ -1,4 +1,9 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\TextUI\TestRunner;
+
 /**
  * Zend Framework
  *
@@ -35,25 +40,28 @@ require_once 'Zend/Log/Writer/Null.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
-class Zend_Log_Writer_NullTest extends PHPUnit_Framework_TestCase
+class Zend_Log_Writer_NullTest extends TestCase
 {
     public static function main()
     {
-        $suite  = new PHPUnit_Framework_TestSuite(__CLASS__);
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
+        $suite = new TestSuite(__CLASS__);
+        $result = (new TestRunner())->run($suite);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testWrite()
     {
         $writer = new Zend_Log_Writer_Null();
-        $writer->write(array('message' => 'foo', 'priority' => 42));
+        $writer->write(['message' => 'foo', 'priority' => 42]);
     }
 
     public function testFactory()
     {
-        $cfg = array('log' => array('memory' => array(
+        $cfg = ['log' => ['memory' => [
             'writerName' => "Null"
-        )));
+        ]]];
 
         require_once 'Zend/Log.php';
         $logger = Zend_Log::factory($cfg['log']);

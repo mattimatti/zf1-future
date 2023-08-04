@@ -1,4 +1,7 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Zend Framework
  *
@@ -36,8 +39,17 @@ require_once 'Zend/Service/Amazon/Ec2/Region.php';
  * @group      Zend_Service_Amazon
  * @group      Zend_Service_Amazon_Ec2
  */
-class Zend_Service_Amazon_Ec2_RegionTest extends PHPUnit_Framework_TestCase
+class Zend_Service_Amazon_Ec2_RegionTest extends TestCase
 {
+    /**
+     * @var \Zend_Http_Client_Adapter_Test|mixed
+     */
+    protected $adapter;
+
+    /**
+     * @var null
+     */
+    protected $Zend_Service_Amazon_Ec2_Availabilityzones;
 
     /**
      * @var Zend_Service_Amazon_Ec2_Availabilityzones
@@ -47,25 +59,24 @@ class Zend_Service_Amazon_Ec2_RegionTest extends PHPUnit_Framework_TestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->Zend_Service_Amazon_Ec2_Region = new Zend_Service_Amazon_Ec2_Region('access_key', 'secret_access_key');
 
         $adapter = new Zend_Http_Client_Adapter_Test();
-        $client = new Zend_Http_Client(null, array(
+        $client = new Zend_Http_Client(null, [
             'adapter' => $adapter
-        ));
+        ]);
         $this->adapter = $adapter;
         Zend_Service_Amazon_Ec2_Region::setHttpClient($client);
-
     }
 
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->adapter);
 
@@ -97,12 +108,12 @@ class Zend_Service_Amazon_Ec2_RegionTest extends PHPUnit_Framework_TestCase
 
         $response = $this->Zend_Service_Amazon_Ec2_Region->describe('us-east-1');
 
-        $arrRegion = array(
-            array(
-                'regionName'    => 'us-east-1',
-                'regionUrl'     => 'us-east-1.ec2.amazonaws.com'
-            )
-        );
+        $arrRegion = [
+            [
+                'regionName' => 'us-east-1',
+                'regionUrl' => 'us-east-1.ec2.amazonaws.com'
+            ]
+        ];
 
         $this->assertSame($arrRegion, $response);
     }
@@ -132,20 +143,19 @@ class Zend_Service_Amazon_Ec2_RegionTest extends PHPUnit_Framework_TestCase
                     . "</DescribeRegionsResponse>";
         $this->adapter->setResponse($rawHttpResponse);
 
-        $response = $this->Zend_Service_Amazon_Ec2_Region->describe(array('us-east-1','us-west-1'));
+        $response = $this->Zend_Service_Amazon_Ec2_Region->describe(['us-east-1', 'us-west-1']);
 
-        $arrRegion = array(
-            array(
-                'regionName'    => 'us-east-1',
-                'regionUrl'     => 'us-east-1.ec2.amazonaws.com'
-            ),
-            array(
-                'regionName'    => 'us-west-1',
-                'regionUrl'     => 'us-west-1.ec2.amazonaws.com'
-            )
-        );
+        $arrRegion = [
+            [
+                'regionName' => 'us-east-1',
+                'regionUrl' => 'us-east-1.ec2.amazonaws.com'
+            ],
+            [
+                'regionName' => 'us-west-1',
+                'regionUrl' => 'us-west-1.ec2.amazonaws.com'
+            ]
+        ];
 
         $this->assertSame($arrRegion, $response);
     }
 }
-

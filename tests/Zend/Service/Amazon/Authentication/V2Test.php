@@ -1,4 +1,7 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Zend Framework
  *
@@ -31,9 +34,8 @@ require_once 'Zend/Service/Amazon/Authentication/V2.php';
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCase
+class Zend_Service_Amazon_Authentication_V2Test extends TestCase
 {
-
     /**
      * @var Zend_Service_Amazon_Authentication_V2
      */
@@ -42,7 +44,7 @@ class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCa
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -52,7 +54,7 @@ class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCa
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->Zend_Service_Amazon_Authentication_V2 = null;
 
@@ -65,7 +67,7 @@ class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCa
     public function testGenerateEc2PostSignature()
     {
         $url = "https://ec2.amazonaws.com/";
-        $params = array();
+        $params = [];
         $params['Action'] = "DescribeImages";
         $params['ImageId.1'] = "ami-2bb65342";
         $params['Timestamp'] = "2009-11-11T13:52:38Z";
@@ -79,7 +81,7 @@ class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCa
     public function testGenerateSqsGetSignature()
     {
         $url = "https://queue.amazonaws.com/770098461991/queue2";
-        $params = array();
+        $params = [];
         $params['Action'] = "SetQueueAttributes";
         $params['Attribute.Name'] = "VisibilityTimeout";
         $params['Attribute.Value'] = "90";
@@ -91,6 +93,4 @@ class Zend_Service_Amazon_Authentication_V2Test extends PHPUnit_Framework_TestCa
         $this->assertEquals('YSw7HXDqokM/A6DhLz8kG+sd+oD5eMjqx3a02A0+GkE=', $params['Signature']);
         $this->assertEquals(file_get_contents(dirname(__FILE__) . '/_files/sqs_v2_get_return.txt'), $ret);
     }
-
 }
-

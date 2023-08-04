@@ -1,4 +1,7 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Zend Framework
  *
@@ -38,42 +41,49 @@ require_once 'Zend/Auth/Adapter/Ldap.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Auth
  */
-class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
+class Zend_Auth_Adapter_Ldap_OnlineTest extends TestCase
 {
     /**
      * LDAP connection options
      *
      * @var array
      */
-    protected $_options = array();
+    protected $_options = [];
 
     /**
      * @var array
      */
-    protected $_names = array();
+    protected $_names = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->_options = array(
+        $this->_options = [
             'host' => TESTS_ZEND_LDAP_HOST,
             'username' => TESTS_ZEND_LDAP_USERNAME,
             'password' => TESTS_ZEND_LDAP_PASSWORD,
             'baseDn' => TESTS_ZEND_LDAP_BASE_DN,
-        );
-        if (defined('TESTS_ZEND_LDAP_PORT'))
+        ];
+        if (defined('TESTS_ZEND_LDAP_PORT')) {
             $this->_options['port'] = TESTS_ZEND_LDAP_PORT;
-        if (defined('TESTS_ZEND_LDAP_USE_START_TLS'))
+        }
+        if (defined('TESTS_ZEND_LDAP_USE_START_TLS')) {
             $this->_options['useStartTls'] = TESTS_ZEND_LDAP_USE_START_TLS;
-        if (defined('TESTS_ZEND_LDAP_USE_SSL'))
+        }
+        if (defined('TESTS_ZEND_LDAP_USE_SSL')) {
             $this->_options['useSsl'] = TESTS_ZEND_LDAP_USE_SSL;
-        if (defined('TESTS_ZEND_LDAP_BIND_REQUIRES_DN'))
+        }
+        if (defined('TESTS_ZEND_LDAP_BIND_REQUIRES_DN')) {
             $this->_options['bindRequiresDn'] = TESTS_ZEND_LDAP_BIND_REQUIRES_DN;
-        if (defined('TESTS_ZEND_LDAP_ACCOUNT_FILTER_FORMAT'))
+        }
+        if (defined('TESTS_ZEND_LDAP_ACCOUNT_FILTER_FORMAT')) {
             $this->_options['accountFilterFormat'] = TESTS_ZEND_LDAP_ACCOUNT_FILTER_FORMAT;
-        if (defined('TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME'))
+        }
+        if (defined('TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME')) {
             $this->_options['accountDomainName'] = TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME;
-        if (defined('TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME_SHORT'))
+        }
+        if (defined('TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME_SHORT')) {
             $this->_options['accountDomainNameShort'] = TESTS_ZEND_LDAP_ACCOUNT_DOMAIN_NAME_SHORT;
+        }
 
         if (defined('TESTS_ZEND_LDAP_ALT_USERNAME')) {
             $this->_names[Zend_Ldap::ACCTNAME_FORM_USERNAME] = TESTS_ZEND_LDAP_ALT_USERNAME;
@@ -91,7 +101,7 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
     public function testSimpleAuth()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             TESTS_ZEND_LDAP_ALT_USERNAME,
             TESTS_ZEND_LDAP_ALT_PASSWORD
         );
@@ -114,7 +124,7 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
         foreach ($this->_names as $form => $formName) {
             $options = $this->_options;
             $options['accountCanonicalForm'] = $form;
-            $adapter = new Zend_Auth_Adapter_Ldap(array($options));
+            $adapter = new Zend_Auth_Adapter_Ldap([$options]);
             $adapter->setPassword(TESTS_ZEND_LDAP_ALT_PASSWORD);
             foreach ($this->_names as $username) {
                 $adapter->setUsername($username);
@@ -130,7 +140,7 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
     public function testInvalidPassAuth()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             TESTS_ZEND_LDAP_ALT_USERNAME,
             'invalid'
         );
@@ -144,7 +154,7 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
     public function testInvalidUserAuth()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             'invalid',
             'doesntmatter'
         );
@@ -161,7 +171,7 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
     public function testMismatchDomainAuth()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             'EXAMPLE\\doesntmatter',
             'doesntmatter'
         );
@@ -171,13 +181,13 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($result->isValid());
         $this->assertThat($result->getCode(), $this->lessThanOrEqual(Zend_Auth_Result::FAILURE));
         $messages = $result->getMessages();
-        $this->assertContains('not found', $messages[0]);
+        $this->assertStringContainsString('not found', $messages[0]);
     }
 
     public function testAccountObjectRetrieval()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             TESTS_ZEND_LDAP_ALT_USERNAME,
             TESTS_ZEND_LDAP_ALT_PASSWORD
         );
@@ -193,13 +203,13 @@ class Zend_Auth_Adapter_Ldap_OnlineTest extends PHPUnit_Framework_TestCase
     public function testAccountObjectRetrievalWithOmittedAttributes()
     {
         $adapter = new Zend_Auth_Adapter_Ldap(
-            array($this->_options),
+            [$this->_options],
             TESTS_ZEND_LDAP_ALT_USERNAME,
             TESTS_ZEND_LDAP_ALT_PASSWORD
         );
 
         $result = $adapter->authenticate();
-        $account = $adapter->getAccountObject(array(), array('userPassword'));
+        $account = $adapter->getAccountObject([], ['userPassword']);
 
         $this->assertTrue($account instanceof stdClass);
         $this->assertFalse(isset($account->userpassword));
